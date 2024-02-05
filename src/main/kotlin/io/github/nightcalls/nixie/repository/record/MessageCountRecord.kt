@@ -36,7 +36,7 @@ data class MessageCountRecord(
     @Column(nullable = false)
     val date: LocalDate,
     /**
-     * Счётчик сообщений за минимальный период агрегации (день)
+     * Счётчик сообщений за минимальный период агрегации
      */
     @Column(nullable = false)
     val messageCount: Int = 1

@@ -13,7 +13,7 @@ interface UsersInVoicesRepository : CrudRepository<UserInVoiceRecord, Long> {
     fun findByGuildIdAndUserId(guildId: Long, userId: Long): Optional<UserInVoiceRecord>
 
     /**
-     * Записать время входа в войс определенного пользователя на определенном сервере; не записывать время перехода между войсами одного и того же сервера
+     * Записать время входа в голосовой канал конкретного пользователя конкретного сервера; не обновлять существующую запись в случае перехода между голосовыми каналами одного и того же сервера
      */
     @Modifying
     @Query(

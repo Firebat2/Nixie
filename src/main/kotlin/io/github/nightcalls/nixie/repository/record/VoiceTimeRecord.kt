@@ -32,7 +32,7 @@ data class VoiceTimeRecord(
     @Column(nullable = false)
     val date: LocalDate,
     /**
-     * Проведенное в войсах время в секундах
+     * Проведенное в голосовых каналах время в секундах за минимальный период агрегации
      */
     @Column(nullable = false)
     val time: Int

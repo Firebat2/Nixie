@@ -10,7 +10,7 @@ private val logger = KotlinLogging.logger {}
 @Service
 class SlashCommandService {
     /**
-     * Вывод инструкции по использованию бота
+     * Вывести информационное сообщение
      */
     fun showInfo(event: SlashCommandInteractionEvent) {
         val embedBuilder = getCommonEmbedBuilder()
@@ -22,6 +22,15 @@ class SlashCommandService {
             "/stats-voices", "Статистика по проведенному в голосовых каналах времени", false
         )
         embedBuilder.addField(
+            "Параметры команд",
+            StringBuilder()
+                .append("При заполнении параметра \"name\" будет сформирована статистика по конкретному пользователю\n")
+                .append("При заполнении параметров \"start-date\" и \"end-date\" будет сформирована статистика за конкретный период времени\n")
+                .append("Формат даты: \"2024-01-31\", оба пограничных дня включаются в период\n")
+                .toString(),
+            false
+        )
+        embedBuilder.addField(
             "nixiethebat@gmail.com", "Адрес для обратной связи", false
         )
 
@@ -30,7 +39,7 @@ class SlashCommandService {
     }
 
     /**
-     * Вывод предупреждения о задержке
+     * Вывести предупреждение о задержке
      */
     fun coolDownReply(event: SlashCommandInteractionEvent) {
         val embedBuilder = getCommonEmbedBuilder()

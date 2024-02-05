@@ -4,12 +4,16 @@ import io.github.nightcalls.nixie.listeners.SlashCommandEventListener
 import io.github.nightcalls.nixie.service.SlashCommandService
 import io.github.nightcalls.nixie.service.count.MessageCountService
 import io.github.nightcalls.nixie.service.count.VoiceTimeCountService
+import io.github.nightcalls.nixie.utils.END_DATE_OPTION
+import io.github.nightcalls.nixie.utils.NAME_OPTION
+import io.github.nightcalls.nixie.utils.START_DATE_OPTION
 import io.github.oshai.kotlinlogging.KotlinLogging
 import net.dv8tion.jda.api.JDA
 import net.dv8tion.jda.api.entities.Guild
 import net.dv8tion.jda.api.events.guild.GuildJoinEvent
 import net.dv8tion.jda.api.events.guild.GuildLeaveEvent
 import net.dv8tion.jda.api.hooks.ListenerAdapter
+import net.dv8tion.jda.api.interactions.commands.OptionType
 import net.dv8tion.jda.api.interactions.commands.build.Commands
 import org.springframework.context.event.ContextClosedEvent
 import org.springframework.context.event.ContextRefreshedEvent
@@ -29,7 +33,7 @@ class SlashCommandEventListenerCreatingService(
     private val listeners = ConcurrentHashMap<Long, SlashCommandEventListener>()
 
     /**
-     * Создание SlashCommandEventListener'ов при поднятии контекста приложения
+     * Создать и запустить SlashCommandEventListener'ы при поднятии контекста приложения
      */
     @EventListener
     fun onContextRefreshedEvent(event: ContextRefreshedEvent) {
@@ -42,7 +46,7 @@ class SlashCommandEventListenerCreatingService(
     }
 
     /**
-     * Отключение данного слушателя изменений контекста и SlashCommandEventListener'ов при закрытии контекста приложения
+     * Отключить данного слушателя изменений контекста и SlashCommandEventListener'ов при закрытии контекста приложения
      */
     @EventListener
     fun onContextClosedEvent(event: ContextClosedEvent) {
@@ -69,12 +73,18 @@ class SlashCommandEventListenerCreatingService(
         logger.info { "Глобальные команды в количестве ${jda.retrieveCommands().complete().size} установлены" }
     }
 
-    private fun createListener(guild: Guild): SlashCommandEventListener {
+    private fun createListener(guild: Guild) {
         logger.debug { "Создаётся SlashCommandEventListener для сервера ${guild.name}..." }
         val listener = SlashCommandEventListener(guild, slashCommandService, messageCountService, voiceTimeCountService)
         guild.updateCommands().addCommands(
-            Commands.slash("stats-messages", "Show messages stats"),
+            Commands.slash("stats-messages", "Show messages stats")
+                .addOption(OptionType.STRING, NAME_OPTION, "Уникальное имя пользователя", false)
+                .addOption(OptionType.STRING, START_DATE_OPTION, "Начало периода", false)
+                .addOption(OptionType.STRING, END_DATE_OPTION, "Конец периода", false),
             Commands.slash("stats-voices", "Show voice time stats")
+                .addOption(OptionType.STRING, NAME_OPTION, "Уникальное имя пользователя", false)
+                .addOption(OptionType.STRING, START_DATE_OPTION, "Начало периода", false)
+                .addOption(OptionType.STRING, END_DATE_OPTION, "Конец периода", false),
         ).queue()
         jda.addEventListener(listener)
         listeners[guild.idLong] = listener
@@ -83,7 +93,6 @@ class SlashCommandEventListenerCreatingService(
                 guild.retrieveCommands().complete().size
             } установлены"
         }
-        return listener
     }
 
     private fun removeListener(guild: Guild): Boolean {

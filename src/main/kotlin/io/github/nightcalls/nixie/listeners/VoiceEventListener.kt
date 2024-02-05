@@ -20,10 +20,9 @@ open class VoiceEventListener(
         if (event.guild != guild) {
             return
         }
-
         val eventTime = OffsetDateTime.now().toCommonLocalDateTime()
         val eventDto = VoiceEventDto(event, eventTime)
         logger.info { "Получен ${event.javaClass.simpleName}: $eventDto" }
-        service.incrementOrCreateCount(eventDto)
+        service.increaseOrCreateCount(eventDto)
     }
 }

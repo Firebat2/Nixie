@@ -8,9 +8,16 @@ class UserIdService(
     private val jda: JDA,
 ) {
     /**
-     * Получение уникального имени пользователя/имени до хештега по userId или возврат userId, если пользователь не найден
+     * Получить уникальное имя пользователя/имя до хештега по userId или вернуть userId, если пользователь не найден
      */
-    fun userIdToUserName(userId: Long): String {
+    fun getUserNameByUserId(userId: Long): String {
         return jda.getUserById(userId)?.name ?: jda.retrieveUserById(userId).complete()?.name ?: userId.toString()
+    }
+
+    /**
+     * Получить userId по уникальному имени пользователя/имени до хештега или вернуть null, если пользователь не найден
+     */
+    fun getUserIdByUserName(name: String): Long? {
+        return jda.getUsersByName(name, false).firstOrNull()?.idLong
     }
 }

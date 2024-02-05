@@ -26,7 +26,6 @@ class SlashCommandEventListener(
         if (event.guild != guild) {
             return
         }
-
         logger.info { "Получен ${event.javaClass.simpleName}: ${event.name}" }
         when (event.name) {
             "nixie" -> slashCommandService.showInfo(event)

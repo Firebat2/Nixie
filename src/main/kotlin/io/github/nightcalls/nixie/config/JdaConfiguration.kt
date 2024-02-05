@@ -11,7 +11,6 @@ import net.dv8tion.jda.api.utils.cache.CacheFlag
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.core.env.Environment
-import javax.security.auth.login.LoginException
 
 private val logger = KotlinLogging.logger {}
 
@@ -23,23 +22,24 @@ class JdaConfiguration(
     fun jda(): JDA {
         val token = environment.getRequiredProperty("discord.token")
         val builder = createBuilder(token)
+        val jda: JDA
+        logger.info { "Производится попытка залогиниться в Discord..." }
         try {
-            logger.info { "Производится попытка залогиниться в Discord..." }
-            val jda = builder.build()
+            jda = builder.build()
             jda.awaitReady()
-            logger.info { "Успешный логин в Discord" }
-            return jda
-        } catch (e: LoginException) {
+        } catch (e: Exception) {
             logger.error { "Не удалось залогиниться в Discord! $e" }
             throw e
         }
+        logger.info { "Успешный логин в Discord" }
+        return jda
     }
 
-    fun createBuilder(token: String): JDABuilder {
+    private fun createBuilder(token: String): JDABuilder {
         return JDABuilder.create(
             token,
             GatewayIntent.GUILD_MESSAGES, // для сбора статистики сообщений
-            GatewayIntent.GUILD_VOICE_STATES, // для сбора статистики входов и выходов из войсов
+            GatewayIntent.GUILD_VOICE_STATES, // для сбора статистики входов и выходов из голосовых каналов
             GatewayIntent.GUILD_MEMBERS // для удаления участников из кэша, после того как они покинут гильдию
         )
             .disableCache(
